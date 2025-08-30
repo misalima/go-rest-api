@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 	"rest-api/src/core/domain"
 	"rest-api/src/core/interfaces/primary"
 	"rest-api/src/core/interfaces/secondary"
@@ -14,32 +13,23 @@ type UserService struct {
 var _ primary.UserServicePort = (*UserService)(nil)
 
 func (u *UserService) Create(user domain.User) (domain.User, error) {
-	user, err := u.repo.Insert(user)
-	if err != nil {
-		log.Fatal("Error inserting user: ", err)
-		return domain.User{}, err
-	}
-	return user, nil
+	return u.repo.Insert(user)
 }
 
 func (u UserService) GetByID(id int) (domain.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.FetchByID(id)
 }
 
 func (u UserService) GetAll() ([]domain.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.FetchAll()
 }
 
 func (u UserService) Update(user domain.User) (domain.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.Update(user)
 }
 
 func (u UserService) Delete(id int) error {
-	//TODO implement me
-	panic("implement me")
+	return u.repo.Delete(id)
 }
 
 func NewUserService(repo secondary.UserRepositoryPort) *UserService {
