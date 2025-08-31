@@ -44,3 +44,18 @@ func (u *UserHandler) CreateUser(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, userResponse)
 }
+
+func (u *UserHandler) GetAllUsers(c echo.Context) error  {
+	users, err := u.userService.GetAll()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	usersDTO := make([]dto.UserResponseDTO, 0, len(users))
+	for _, userDomain := range users {
+		usersDTO = append(usersDTO, dto.FromDomain(userDomain))
+	}
+
+	return c.JSON(http.StatusOK, usersDTO)
+}
+

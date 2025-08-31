@@ -28,6 +28,7 @@ func main() {
 	e := echo.New()
 
 	e.POST("/user", userHandler.CreateUser)
+	e.GET("/user", userHandler.GetAllUsers)
 
 	e.Logger.Fatal(e.Start(":8000"))
 
