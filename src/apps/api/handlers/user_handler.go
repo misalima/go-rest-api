@@ -78,6 +78,42 @@ func (u *UserHandler) GetUserById(c echo.Context) error {
 	return c.JSON(http.StatusOK, userDTO)
 }
 
+func (u *UserHandler) UpdateUserById(c echo.Context) error {
+	idParam := c.Param("id")
+
+	userId, err := strconv.Atoi(idParam)
+	if err != nil || userId <= 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid identifier"})
+	}
+
+	var req dto.CreateUserDTO
+
+	err = c.Bind(&req)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+
+	err = req.Validate()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	var user domain.User
+	user.SetId(userId)
+	user.SetName(req.Name)
+	user.SetEmail(req.Email)
+	user.SetAge(req.Age)
+
+	userUpdated, err := u.userService.Update(user)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	userUpdatedDTO := dto.FromDomain(userUpdated)
+
+	return c.JSON(http.StatusOK, userUpdatedDTO)
+}
+
 func (u *UserHandler) DeleteUserById(c echo.Context) error {
 	idParam := c.Param("id")
 
