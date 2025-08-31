@@ -78,3 +78,14 @@ func (u *UserHandler) GetUserById(c echo.Context) error {
 	return c.JSON(http.StatusOK, userDTO)
 }
 
+func (u *UserHandler) DeleteUserById(c echo.Context) error {
+	idParam := c.Param("id")
+
+	userId, err := strconv.Atoi(idParam)
+	if err != nil || userId <= 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid identifier"})
+	}
+
+	return c.JSON(http.StatusOK, u.userService.Delete(userId))
+}
+
