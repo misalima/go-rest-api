@@ -120,7 +120,7 @@ func (r *UserRepository) FetchAll() ([]domain.User, error) {
 }
 
 func (r *UserRepository) Update(user domain.User) (domain.User, error) {
-	query := `UPDATE users SET name = $1, email = $2, age = $3, updated_at = NOW() WHERE id = $4 RETURNING updated_at`
+	query := `UPDATE users SET name = $1, email = $2, age = $3, updated_at = NOW() WHERE id = $4 RETURNING updated_at, created_at`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -128,14 +128,16 @@ func (r *UserRepository) Update(user domain.User) (domain.User, error) {
 	row := r.db.QueryRow(ctx, query, user.Name(), user.Email(), user.Age(), user.Id())
 
 	var updatedAt time.Time
+	var createdAt time.Time
 
-	err := row.Scan(&updatedAt)
+	err := row.Scan(&updatedAt, &createdAt)
 	if err != nil {
 		log.Fatal("Error scanning from row: ", err)
 		return domain.User{}, err
 	}
 
 	user.SetUpdatedAt(updatedAt)
+	user.SetCreatedAt(createdAt)
 
 	return user, nil
 }
