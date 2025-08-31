@@ -29,6 +29,7 @@ func main() {
 
 	e.POST("/user", userHandler.CreateUser)
 	e.GET("/user", userHandler.GetAllUsers)
+	e.GET("/user/:id", userHandler.GetUserById)
 
 	e.Logger.Fatal(e.Start(":8000"))
 

@@ -5,6 +5,7 @@ import (
 	"rest-api/src/apps/api/handlers/dto"
 	"rest-api/src/core/domain"
 	"rest-api/src/core/interfaces/primary"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -57,5 +58,23 @@ func (u *UserHandler) GetAllUsers(c echo.Context) error  {
 	}
 
 	return c.JSON(http.StatusOK, usersDTO)
+}
+
+func (u *UserHandler) GetUserById(c echo.Context) error {
+	idParam := c.Param("id")
+
+	userId, err := strconv.Atoi(idParam)
+	if err != nil || userId <= 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid identifier"})
+	}
+
+	user, err := u.userService.GetByID(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	userDTO := dto.FromDomain(user)
+
+	return c.JSON(http.StatusOK, userDTO)
 }
 
