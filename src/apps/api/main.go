@@ -19,6 +19,9 @@ func main() {
 	uri := os.Getenv("DATABASE_URL")
 
 	pool, err := postgres.GetDBConnection(uri)
+	if err != nil {
+		panic("Erro ao conectar ao banco de dados: " + err.Error())
+	}
 
 	userRepository := postgres.NewUserRepository(pool)
 	userService := services.NewUserService(userRepository)
@@ -26,8 +29,11 @@ func main() {
 
 	// Iniciar Echo
 	e := echo.New()
-
+	e.GET("/user/:id", userHandler.GetUserByID)
+	e.GET("/users", userHandler.GetAllUsers)
 	e.POST("/user", userHandler.CreateUser)
+	e.PUT("/user/:id", userHandler.UpdateUser)
+	e.DELETE("/user/:id", userHandler.DeleteUser)
 
 	e.Logger.Fatal(e.Start(":8000"))
 
