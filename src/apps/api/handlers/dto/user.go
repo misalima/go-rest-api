@@ -43,3 +43,11 @@ func FromDomain(user domain.User) UserResponseDTO {
 		UpdatedAt: user.UpdatedAt().Format("2006-01-02T15:04:05Z07:00"),
 	}
 }
+
+func FromDomainList(users []domain.User) []UserResponseDTO {
+	var userResponses []UserResponseDTO
+	for _, user := range users {
+		userResponses = append(userResponses, FromDomain(user))
+	}
+	return userResponses
+}
